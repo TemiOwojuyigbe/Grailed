@@ -19,14 +19,16 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/grailed', {
 
 // Import auth routes
 const authRoutes = require('./routes/authRoutes');
+const authMiddleware = require('./middlewares/authMiddleware');
+const itemRoutes = require('./routes/itemRoutes');
 
 app.use('/api/auth', authRoutes);
+app.use('/api/items', itemRoutes);
 
 // Simple route for testing
-app.get('/', (req, res) => {
-  res.send('Server is running!');
+app.get('/api/auth/me' , authMiddleware, (req, res) => {
+  res.json({ userId: req.user.id})
 });
-
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
